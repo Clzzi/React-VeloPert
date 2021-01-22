@@ -1,13 +1,15 @@
 import React from 'react';
 
-function User({ user, onRemove }) {
+function User({ user, onRemove, onToggle }) {
     const { userName, email, id, active } = user;
     return(
         <div>
             <b style={{
                 color: active ? 'green' : 'black',
                 cursor: 'pointer',
-            }}>
+            }}
+                onClick={() => onToggle(id)}
+            >
                 {userName}
             </b>
             &nbsp;
@@ -17,7 +19,7 @@ function User({ user, onRemove }) {
     )
 }
 
-function UserList({ users, onRemove }) {
+function UserList({ users, onRemove, onToggle }) {
     return (
         <div>
             {
@@ -26,6 +28,7 @@ function UserList({ users, onRemove }) {
                     user={user} 
                     key={user.id}
                     onRemove={onRemove}
+                    onToggle={onToggle}
                 />))
             }
         </div>
