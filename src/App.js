@@ -1,4 +1,4 @@
-import React, { useRef, useState, useMemo } from 'react';
+import React, { useRef, useState, useMemo, useCallback } from 'react';
 import Hello from './hello';
 import './App.css';
 import Counter from './Counter';
@@ -16,14 +16,16 @@ function App() {
     username: '',
     email: '',
   }); 
+
   const { username, email } = inputs;
-  const onChnage = (e) => {
+
+  const onChange = useCallback(e => {
     const { name, value } = e.target;
     setInputs({
       ...inputs,
       [name]: value
     });
-  };
+  }, [inputs]); // inputs값이 바뀔때만 함수가 나오고 그게 아니라면 그냥 함수를 재사용하게됨
 
   const [users, setUsers] = useState([
     {
@@ -48,32 +50,32 @@ function App() {
  
   const nextId = useRef(4);
 
-  const onCreate = () => {
+  const onCreate = useCallback(() => {
     const user = {
       id: nextId.current,
       userName: username,
       email,
     };
-    setUsers([...users, user]);
-    //setUsers(users.concat(user))
+    //setUsers([...users, user]);
+    setUsers(users => users.concat(user))
     setInputs({
       username: '',
       email: '',
     });
     nextId.current += 1;
-  };
+  }, [username, email]);
 
-  const onRemove = (id) => {
-    setUsers(users.filter(user => user.id !== id));
-  }
+  const onRemove = useCallback((id) => {
+    setUsers(users => users.filter(user => user.id !== id));
+  }, []);
 
-  const onToggle = (id) => {
-    setUsers(users.map(
+  const onToggle = useCallback((id) => {
+    setUsers(users => users.map(
       user => user.id === id 
       ? { ...user, active: !user.active}
       : user
     ))
-  }
+    }, []);
 
   const count = useMemo(() => countActiveUsers(users), [users]);
 
@@ -82,7 +84,7 @@ function App() {
     <CreateUser 
       username={username} 
       email={email} 
-      onChange={onChnage}
+      onChange={onChange}
       onCreate={onCreate} 
     />
       <UserList users={users} onRemove={onRemove} onToggle={onToggle} />
