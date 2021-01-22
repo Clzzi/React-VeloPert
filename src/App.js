@@ -1,25 +1,82 @@
-import logo from './logo.svg';
+import React, { useRef, useState } from 'react';
+import Hello from './hello';
 import './App.css';
+import Counter from './Counter';
+import InputSample from './InputSample';
+import UserList from './UserList';
+import CreateUser from './CreateUser';
 
 function App() {
+  const [inputs, setInputs] = useState({
+    username: '',
+    email: '',
+  }); 
+  const { username, email } = inputs;
+  const onChnage = (e) => {
+    const { name, value } = e.target;
+    setInputs({
+      ...inputs,
+      [name]: value
+    });
+  };
+
+  const [users, setUsers] = useState([
+    {
+        id: 1,
+        userName: 'Clzzi',
+        email: 'clzzi1109@naver.com',
+        active: true,
+    },
+    {
+        id: 2,
+        userName: 'memue',
+        email: 'memue0918@naver.com',
+        active: false,
+    },
+    {
+        id: 3,
+        userName: 'boacoe',
+        email: 'beaut2014@naver.com',
+        active: false,
+    }
+  ]);
+ 
+  const nextId = useRef(4);
+
+  const onCreate = () => {
+    const user = {
+      id: nextId.current,
+      userName: username,
+      email,
+    };
+    setUsers([...users, user]);
+    //setUsers(users.concat(user))
+    setInputs({
+      username: '',
+      email: '',
+    });
+    nextId.current += 1;
+  };
+
+  const onRemove = (id) => {
+    setUsers(users.filter(user => user.id !== id));
+  }
+
+  const onToggle = (id) => {
+    
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <>
+    <CreateUser 
+      username={username} 
+      email={email} 
+      onChange={onChnage}
+      onCreate={onCreate} 
+    />
+      <UserList users={users} onRemove={onRemove} />
+    </>
+  )
 }
 
 export default App;
