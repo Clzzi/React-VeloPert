@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import TodoItem from './TodoItem';
+import { useTodoState } from '../TodoContext';
 
 const TodoListBlcok = styled.div`
   flex: 1;
@@ -10,6 +11,7 @@ const TodoListBlcok = styled.div`
 `;
 
 function TodoList() {
+  const state = useTodoState();
   return <TodoListBlcok>
     <TodoItem text="컴포넌트 스타일링" done={true} />
     <TodoItem text="컨텍스트 만들기이" done={true} />
