@@ -11,14 +11,19 @@ const TodoListBlcok = styled.div`
 `;
 
 function TodoList() {
-  const state = useTodoState();
-  return <TodoListBlcok>
-    <TodoItem text="컴포넌트 스타일링" done={true} />
-    <TodoItem text="컨텍스트 만들기이" done={true} />
-    <TodoItem text="프로젝트 생성하기" done={false} />
-    <TodoItem text="프로젝트 생성하기" done={true} />
-    <TodoItem text="프로젝트 생성하기" done={true} />
-  </TodoListBlcok>;
+  const todos = useTodoState();
+  return (
+    <TodoListBlcok>
+      {todos.map((todo) => (
+        <TodoItem
+          key={todo.id}
+          id={todo.id}
+          text={todo.text}
+          done={todo.done}
+        />
+      ))}
+    </TodoListBlcok>
+  );
 }
 
 export default TodoList;
