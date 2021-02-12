@@ -1,30 +1,28 @@
 import React, { useCallback } from 'react';
 import Todos from '../components/Todos';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { addTodo, toggleTodo } from '../modules/todos';
 
-function TodosContainer({ todos, addTodo, toggleTodo }) {
+function TodosContainer() {
+  const todos = useSelector((state) => state.todos);
+  const dispatch = useDispatch();
+
   const onCreate = useCallback(
     (text) => {
-      addTodo(text);
+      dispatch(addTodo(text));
     },
-    [addTodo],
+    [dispatch],
   );
 
   const onToggle = useCallback(
     (id) => {
-      toggleTodo(id);
+      dispatch(toggleTodo(id));
     },
-    [toggleTodo],
+    [dispatch],
   );
+
   return <Todos todos={todos} onCreate={onCreate} onToggle={onToggle} />;
 }
-const mapStateToProps = (state) => ({ todos: state.todos });
 
-const mapDispatchToProps = {
-  addTodo,
-  toggleTodo,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(TodosContainer);
+export default TodosContainer;
 // ctrl + space ==> 자동완성
