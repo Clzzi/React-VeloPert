@@ -1,5 +1,5 @@
 import * as postsAPI from '../api/posts';
-import { reducerUtils } from '../lib/asyncUtils';
+import { createPromiseThunk, reducerUtils } from '../lib/asyncUtils';
 
 const GET_POSTS = 'GET_POSTS';
 const GET_POSTS_SUCCESS = 'GET_POSTS_SUCCESS';
@@ -9,33 +9,9 @@ const GET_POST = 'GET_POST';
 const GET_POST_SUCCESS = 'GET_POST_SUCCESS';
 const GET_POST_ERROR = 'GET_POST_ERROR';
 
-export const getPosts = () => async (dispatch) => {
-  // 요청이 시작됨을 알리고
-  dispatch({ type: GET_POSTS });
-  // api를 호출
-  try {
-    // 성공시
-    const posts = await postsAPI.getPosts();
-    dispatch({ type: GET_POSTS_SUCCESS });
-  } catch (e) {
-    //실패시
-    dispatch({ type: GET_POSTS_ERROR, error: e });
-  }
-};
+export const getPosts = createPromiseThunk(GET_POSTS, postsAPI.getPosts);
 
-export const getPost = (id) => async (dispatch) => {
-  // 요청이 시작됨을 알리고
-  dispatch({ type: GET_POST });
-  // api를 호출
-  try {
-    // 성공시
-    const post = await postsAPI.getPost(id);
-    dispatch({ type: GET_POST_SUCCESS });
-  } catch (e) {
-    //실패시
-    dispatch({ type: GET_POST_ERROR, error: e });
-  }
-};
+export const getPost = createPromiseThunk(GET_POST, postsAPI.getPostById);
 
 const initialState = {
   posts: reducerUtils.initial(),
@@ -53,13 +29,13 @@ export default function posts(state = initialState, action) {
     case GET_POSTS_SUCCESS:
       return {
         ...state,
-        posts: reducerUtils.success(action.posts),
+        posts: reducerUtils.success(action.payload),
       };
 
     case GET_POSTS_ERROR:
       return {
         ...state,
-        posts: reducerUtils.error(action.error),
+        posts: reducerUtils.error(action.payload),
       };
 
     case GET_POST:
@@ -70,12 +46,12 @@ export default function posts(state = initialState, action) {
     case GET_POST_SUCCESS:
       return {
         ...state,
-        post: reducerUtils.success(action.post),
+        post: reducerUtils.success(action.payload),
       };
     case GET_POST_ERROR:
       return {
         ...state,
-        post: reducerUtils.error(action.error),
+        post: reducerUtils.error(action.payload),
       };
     default:
       return state;
