@@ -27,11 +27,11 @@ function counter(
   action: CounterAction,
 ): counterState {
   switch (action.type) {
-    case 'counter/INCREASE':
+    case INCREASE:
       return { count: state.count + 1 };
-    case 'counter/DECREASE':
+    case DECREASE:
       return { count: state.count - 1 };
-    case 'counter/INCREASE_BY':
+    case INCREASE_BY:
       return { count: state.count + action.payload };
     default:
       return state;
