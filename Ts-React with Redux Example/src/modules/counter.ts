@@ -1,13 +1,14 @@
-const INCREASE = 'counter/INCREASE' as const;
-const DECREASE = 'counter/DECREASE' as const;
-const INCREASE_BY = 'counter/INCREASE_BY' as const;
+import { deprecated, ActionType, createReducer } from 'typesafe-actions';
 
-export const increase = () => ({ type: INCREASE });
-export const decrease = () => ({ type: DECREASE });
-export const increaseBy = (diff: number) => ({
-  type: INCREASE_BY,
-  payload: diff,
-});
+const { createStandardAction } = deprecated;
+
+const INCREASE = 'counter/INCREASE';
+const DECREASE = 'counter/DECREASE';
+const INCREASE_BY = 'counter/INCREASE_BY';
+
+export const increase = createStandardAction(INCREASE)();
+export const decrease = createStandardAction(DECREASE)();
+export const increaseBy = createStandardAction(INCREASE_BY)<number>();
 
 type counterState = {
   count: number;
@@ -17,25 +18,30 @@ const initialState: counterState = {
   count: 0,
 };
 
-type CounterAction =
-  | ReturnType<typeof increase>
-  | ReturnType<typeof decrease>
-  | ReturnType<typeof increaseBy>;
+const actions = { increase, decrease, increaseBy };
 
-function counter(
-  state: counterState = initialState,
-  action: CounterAction,
-): counterState {
-  switch (action.type) {
-    case INCREASE:
-      return { count: state.count + 1 };
-    case DECREASE:
-      return { count: state.count - 1 };
-    case INCREASE_BY:
-      return { count: state.count + action.payload };
-    default:
-      return state;
-  }
-}
+type CounterAction = ActionType<typeof actions>;
+
+const counter = createReducer<counterState, CounterAction>(initialState, {
+  [INCREASE]: (state) => ({ count: state.count + 1 }),
+  [DECREASE]: (state) => ({ count: state.count - 1 }),
+  [INCREASE_BY]: (state, action) => ({ count: state.count + action.payload }),
+});
+
+// function counter(
+//   state: counterState = initialState,
+//   action: CounterAction,
+// ): counterState {
+//   switch (action.type) {
+//     case INCREASE:
+//       return { count: state.count + 1 };
+//     case DECREASE:
+//       return { count: state.count - 1 };
+//     case INCREASE_BY:
+//       return { count: state.count + action.payload };
+//     default:
+//       return state;
+//   }
+// }
 
 export default counter;
